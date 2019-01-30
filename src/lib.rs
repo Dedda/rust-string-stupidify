@@ -1,0 +1,53 @@
+pub trait Stupid<T: ToString> {
+
+    fn alternate_case(&self) -> Option<T>;
+}
+
+enum Case {
+    Upper,
+    Lower,
+}
+
+impl Case {
+    fn opposite(&self) -> Case {
+        match self {
+            Case::Upper => Case::Lower,
+            Case::Lower => Case::Upper,
+        }
+    }
+    fn apply(&self, c: char) -> String {
+        if c.is_alphabetic() {
+            match self {
+                Case::Upper => c.to_uppercase().to_string(),
+                Case::Lower => c.to_lowercase().to_string(),
+            }
+        } else {
+            c.to_string()
+        }
+    }
+}
+
+fn alternate_str(data: &str) -> Option<String> {
+    let mut buffer = String::new();
+    let chars = data.chars();
+    let mut case = Case::Upper;
+    for c in chars {
+        if c.is_alphabetic() {
+            buffer.push_str(case.apply(c).as_str());
+            case = case.opposite()
+        } else {
+            buffer.push(c)
+        }
+    }
+    Some(buffer)
+}
+
+impl Stupid<String> for String {
+
+    fn alternate_case(&self) -> Option<String> {
+        let mut buffer = String::from("");
+        let string = self.to_string();
+        let chars = string.as_str().clone();
+        alternate_str(chars)
+    }
+}
