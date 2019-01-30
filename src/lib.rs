@@ -60,11 +60,36 @@ fn vapor_wave_str(data: &str) -> Option<String> {
 
 impl Stupid<String> for String {
 
+    /// # Examples:
+    ///
+    /// ```
+    /// use string_stupidify::Stupid;
+    ///
+    /// let alternating = String::from("abcde").alternate_case().unwrap();
+    /// assert_eq!("AbCdE", alternating.as_str());
+    /// ```
+    ///
+    /// This function will ignore non-alphabetic characters:
+    ///
+    /// ```
+    /// use string_stupidify::Stupid;
+    ///
+    /// let alternating = String::from("abc.de f34ghßi").alternate_case().unwrap();
+    /// assert_eq!("AbC.dE f34GhSSi", alternating.as_str());
+    /// ```
     fn alternate_case(&self) -> Option<String> {
         let chars = self.as_str();
         alternate_str(chars)
     }
 
+    /// # Example:
+    ///
+    /// ```
+    /// use string_stupidify::Stupid;
+    ///
+    /// let vaporized = String::from("abCD eF").vapor_wave().unwrap();
+    /// assert_eq!("A B C D   E F", vaporized.as_str());
+    /// ```
     fn vapor_wave(&self) -> Option<String> {
         let chars = self.as_str();
         vapor_wave_str(chars)
