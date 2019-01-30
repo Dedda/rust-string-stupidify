@@ -1,6 +1,9 @@
 pub trait Stupid<T: ToString> {
 
     fn alternate_case(&self) -> Option<T>;
+
+    fn vapor_wave(&self) -> Option<T>;
+
 }
 
 enum Case {
@@ -42,12 +45,29 @@ fn alternate_str(data: &str) -> Option<String> {
     Some(buffer)
 }
 
+fn vapor_wave_str(data: &str) -> Option<String> {
+    let mut buffer = String::new();
+    let chars = data.chars();
+    for c in chars {
+        buffer.push(c);
+        buffer.push(' ');
+    }
+    if buffer.len() > 0 {
+        buffer.pop();
+    }
+    Some(buffer.to_uppercase())
+}
+
 impl Stupid<String> for String {
 
     fn alternate_case(&self) -> Option<String> {
-        let mut buffer = String::from("");
-        let string = self.to_string();
-        let chars = string.as_str().clone();
+        let chars = self.as_str();
         alternate_str(chars)
     }
+
+    fn vapor_wave(&self) -> Option<String> {
+        let chars = self.as_str();
+        vapor_wave_str(chars)
+    }
+
 }
