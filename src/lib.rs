@@ -31,7 +31,7 @@ impl Case {
 }
 
 fn alternate_str(data: &str) -> Option<String> {
-    let mut buffer = String::new();
+    let mut buffer = String::with_capacity(data.len());
     let chars = data.chars();
     let mut case = Case::Upper;
     for c in chars {
@@ -46,7 +46,7 @@ fn alternate_str(data: &str) -> Option<String> {
 }
 
 fn vapor_wave_str(data: &str) -> Option<String> {
-    let mut buffer = String::new();
+    let mut buffer = String::with_capacity(data.len() * 2 - 1);
     let chars = data.chars();
     for c in chars {
         buffer.push(c);
