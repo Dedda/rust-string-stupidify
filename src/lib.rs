@@ -1,11 +1,16 @@
+extern crate rand;
+
+use rand::{thread_rng, Rng};
+
 pub trait Stupid<T: ToString> {
 
     fn alternate_case(&self) -> Option<T>;
-
     fn vapor_wave(&self) -> Option<T>;
+    fn shuffle(&self) -> Option<T>;
 
 }
 
+#[derive(Debug, PartialEq)]
 enum Case {
     Upper,
     Lower,
@@ -58,6 +63,14 @@ fn vapor_wave_str(data: &str) -> Option<String> {
     Some(buffer.to_uppercase())
 }
 
+fn shuffle_str(data: &str) -> Option<String> {
+    let mut vec: Vec<char> = data.chars().collect();
+    let slice: &mut [char] = &mut vec;
+
+    thread_rng().shuffle(slice);
+    Some(slice.iter().cloned().collect::<String>())
+}
+
 impl Stupid<String> for String {
 
     /// # Examples:
@@ -95,4 +108,38 @@ impl Stupid<String> for String {
         vapor_wave_str(chars)
     }
 
+    /// # Example:
+    ///
+    /// ```
+    /// use string_stupidify::Stupid;
+    ///
+    /// let shuffled = String::from("abcdeba").shuffle().unwrap();
+    /// assert_eq!(7, shuffled.len());
+    /// assert_eq!(2, shuffled.matches("a").count());
+    /// assert_eq!(2, shuffled.matches("b").count());
+    /// assert_eq!(1, shuffled.matches("c").count());
+    /// assert_eq!(1, shuffled.matches("d").count());
+    /// assert_eq!(1, shuffled.matches("e").count());
+    /// ```
+    fn shuffle(&self) -> Option<String> {
+        let chars = self.as_str();
+        shuffle_str(chars)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn opposite_case() {
+        assert_eq!(Case::Lower, Case::Upper.opposite());
+        assert_eq!(Case::Upper, Case::Lower.opposite());
+    }
+
+    #[test]
+    fn apply_case() {
+        assert_eq!("A", Case::Upper.apply('a'));
+        assert_eq!("a", Case::Lower.apply('A'));
+    }
 }
