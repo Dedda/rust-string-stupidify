@@ -6,6 +6,7 @@ use rand::seq::SliceRandom;
 pub trait Stupid<T: ToString> {
 
     fn alternate_case(&self) -> Option<T>;
+    fn invert_case(&self) -> Option<T>;
     fn vapor_wave(&self) -> Option<T>;
     fn shuffle(&self) -> Option<T>;
     fn alphabetical(&self) -> Option<T>;
@@ -19,12 +20,22 @@ enum Case {
 }
 
 impl Case {
+
     fn opposite(&self) -> Case {
         match self {
             Case::Upper => Case::Lower,
             Case::Lower => Case::Upper,
         }
     }
+
+    fn case_of(c: char) -> Option<Case> {
+        if c.is_alphabetic() {
+            Some( if c.is_lowercase() { Case::Lower } else { Case::Upper } )
+        } else {
+            None
+        }
+    }
+
     fn apply(&self, c: char) -> String {
         if c.is_alphabetic() {
             match self {
@@ -37,6 +48,7 @@ impl Case {
     }
 }
 
+#[inline]
 fn alternate_str(data: &str) -> Option<String> {
     let mut buffer = String::with_capacity(data.len());
     let chars = data.chars();
@@ -52,6 +64,20 @@ fn alternate_str(data: &str) -> Option<String> {
     Some(buffer)
 }
 
+#[inline]
+fn invert_case_on_str(data: &str) -> Option<String> {
+    let mut buffer = String::with_capacity(data.len());
+    let chars = data.chars();
+    for c in chars {
+        match Case::case_of(c) {
+            None => buffer.push(c),
+            Some(case) => buffer.push_str(case.opposite().apply(c).as_str()),
+        }
+    }
+    Some(buffer)
+}
+
+#[inline]
 fn vapor_wave_str(data: &str) -> Option<String> {
     let mut buffer = String::with_capacity(data.len() * 2 - 1);
     let chars = data.chars();
@@ -65,6 +91,7 @@ fn vapor_wave_str(data: &str) -> Option<String> {
     Some(buffer.to_uppercase())
 }
 
+#[inline]
 fn shuffle_str(data: &str) -> Option<String> {
     let mut vec: Vec<char> = data.chars().collect();
     let slice: &mut [char] = &mut vec;
@@ -74,11 +101,13 @@ fn shuffle_str(data: &str) -> Option<String> {
     Some(slice.iter().cloned().collect::<String>())
 }
 
+#[inline]
 fn is_str_made_of_identical_chars(data: &str) -> bool {
     let c = data.chars().next().unwrap();
     return data.replace(c, "").is_empty()
 }
 
+#[inline]
 fn sort_str_alphabetical(data: &str) -> String {
     let mut vec: Vec<char> = data.chars().collect();
     vec.sort();
@@ -107,6 +136,19 @@ impl Stupid<String> for String {
     fn alternate_case(&self) -> Option<String> {
         let chars = self.as_str();
         alternate_str(chars)
+    }
+
+    /// # Example:
+    ///
+    /// ```
+    /// use string_stupidify::Stupid;
+    ///
+    /// let inverted = String::from("aBc.de F").invert_case().unwrap();
+    /// assert_eq!("AbC.DE f", inverted);
+    /// ```
+    fn invert_case(&self) -> Option<String> {
+        let chars = self.as_str();
+        invert_case_on_str(chars)
     }
 
     /// # Example:
