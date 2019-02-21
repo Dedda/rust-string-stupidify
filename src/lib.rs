@@ -124,9 +124,25 @@ impl Stupid<String> for String {
     /// assert_eq!(1, shuffled.matches("d").count());
     /// assert_eq!(1, shuffled.matches("e").count());
     /// ```
+    ///
+    /// Single char or empty Strings return a copy of the String:
+    ///
+    /// ```
+    /// use string_stupidify::Stupid;
+    ///
+    /// assert_eq!("", "".to_string().shuffle().unwrap());
+    /// assert_eq!("a", "a".to_string().shuffle().unwrap());
+    /// ```
     fn shuffle(&self) -> Option<String> {
+        if self.len() < 2 {
+            return Some(self.clone())
+        }
         let chars = self.as_str();
-        shuffle_str(chars)
+        let mut shuffled: String = shuffle_str(chars).unwrap();
+        while &shuffled == self {
+            shuffled = shuffle_str(chars).unwrap();
+        }
+        Some(shuffled)
     }
 }
 
