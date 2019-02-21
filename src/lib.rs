@@ -21,18 +21,18 @@ enum Case {
 
 impl Case {
 
-    fn opposite(&self) -> Case {
-        match self {
-            Case::Upper => Case::Lower,
-            Case::Lower => Case::Upper,
-        }
-    }
-
     fn case_of(c: char) -> Option<Case> {
         if c.is_alphabetic() {
             Some( if c.is_lowercase() { Case::Lower } else { Case::Upper } )
         } else {
             None
+        }
+    }
+
+    fn opposite(&self) -> Case {
+        match self {
+            Case::Upper => Case::Lower,
+            Case::Lower => Case::Upper,
         }
     }
 
@@ -224,6 +224,13 @@ impl Stupid<String> for String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn case_of_char() {
+        assert_eq!(Some(Case::Lower), Case::case_of('a'));
+        assert_eq!(Some(Case::Upper), Case::case_of('A'));
+        assert_eq!(None, Case::case_of('.'));
+    }
 
     #[test]
     fn opposite_case() {
