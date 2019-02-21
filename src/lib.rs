@@ -73,6 +73,11 @@ fn shuffle_str(data: &str) -> Option<String> {
     Some(slice.iter().cloned().collect::<String>())
 }
 
+fn is_str_made_of_identical_chars(data: &str) -> bool {
+    let c = data.chars().next().unwrap();
+    return data.replace(c, "").is_empty()
+}
+
 impl Stupid<String> for String {
 
     /// # Examples:
@@ -133,8 +138,16 @@ impl Stupid<String> for String {
     /// assert_eq!("", "".to_string().shuffle().unwrap());
     /// assert_eq!("a", "a".to_string().shuffle().unwrap());
     /// ```
+    ///
+    /// Strings with only one repeated char are also returning a copy:
+    ///
+    /// ```
+    /// use string_stupidify::Stupid;
+    ///
+    /// assert_eq!("aaaaa", "aaaaa".to_string().shuffle().unwrap());
+    /// ```
     fn shuffle(&self) -> Option<String> {
-        if self.len() < 2 {
+        if self.len() < 2 || is_str_made_of_identical_chars(self.as_str()) {
             return Some(self.clone())
         }
         let chars = self.as_str();
@@ -160,5 +173,11 @@ mod tests {
     fn apply_case() {
         assert_eq!("A", Case::Upper.apply('a'));
         assert_eq!("a", Case::Lower.apply('A'));
+    }
+
+    #[test]
+    fn str_made_of_identical_chars() {
+        assert!(is_str_made_of_identical_chars("aaaaa"));
+        assert!(!is_str_made_of_identical_chars("aaada"));
     }
 }
