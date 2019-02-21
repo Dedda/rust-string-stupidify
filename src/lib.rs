@@ -8,6 +8,7 @@ pub trait Stupid<T: ToString> {
     fn alternate_case(&self) -> Option<T>;
     fn vapor_wave(&self) -> Option<T>;
     fn shuffle(&self) -> Option<T>;
+    fn alphabetical(&self) -> Option<T>;
 
 }
 
@@ -76,6 +77,12 @@ fn shuffle_str(data: &str) -> Option<String> {
 fn is_str_made_of_identical_chars(data: &str) -> bool {
     let c = data.chars().next().unwrap();
     return data.replace(c, "").is_empty()
+}
+
+fn sort_str_alphabetical(data: &str) -> String {
+    let mut vec: Vec<char> = data.chars().collect();
+    vec.sort();
+    vec.iter().cloned().collect::<String>()
 }
 
 impl Stupid<String> for String {
@@ -156,6 +163,19 @@ impl Stupid<String> for String {
             shuffled = shuffle_str(chars).unwrap();
         }
         Some(shuffled)
+    }
+
+    /// # Example:
+    ///
+    /// ```
+    /// use string_stupidify::Stupid;
+    ///
+    /// let sorted = String::from("basbc").alphabetical().unwrap();
+    /// assert_eq!("abbcs", sorted);
+    /// ```
+    fn alphabetical(&self) -> Option<String> {
+        let chars = self.as_str();
+        Some(sort_str_alphabetical(chars))
     }
 }
 
