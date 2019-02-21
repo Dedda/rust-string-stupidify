@@ -1,6 +1,7 @@
 extern crate rand;
 
-use rand::{thread_rng, Rng};
+use rand::thread_rng;
+use rand::seq::SliceRandom;
 
 pub trait Stupid<T: ToString> {
 
@@ -67,7 +68,8 @@ fn shuffle_str(data: &str) -> Option<String> {
     let mut vec: Vec<char> = data.chars().collect();
     let slice: &mut [char] = &mut vec;
 
-    thread_rng().shuffle(slice);
+    let mut rng = thread_rng();
+    slice.shuffle(&mut rng);
     Some(slice.iter().cloned().collect::<String>())
 }
 
@@ -114,6 +116,7 @@ impl Stupid<String> for String {
     /// use string_stupidify::Stupid;
     ///
     /// let shuffled = String::from("abcdeba").shuffle().unwrap();
+    /// assert_ne!("abcdeba", shuffled);
     /// assert_eq!(7, shuffled.len());
     /// assert_eq!(2, shuffled.matches("a").count());
     /// assert_eq!(2, shuffled.matches("b").count());
