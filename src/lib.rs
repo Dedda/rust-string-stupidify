@@ -3,6 +3,11 @@ extern crate rand;
 use rand::thread_rng;
 use rand::seq::SliceRandom;
 
+mod decorator;
+pub mod decorators;
+
+pub use decorator::{Decoratable, DecorationError, StringDecorator, ForcedStringDecorator};
+
 pub trait Stupid<T: ToString> {
 
     fn alternate_case(&self) -> Option<T>;
