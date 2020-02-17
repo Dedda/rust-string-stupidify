@@ -1,3 +1,5 @@
+![Crates.io](https://img.shields.io/crates/v/string-stupidify)
+
 # string-stupidify
 
 A collection of tools to manipulate Strings in uncommon ways.
