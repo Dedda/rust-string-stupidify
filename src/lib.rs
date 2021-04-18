@@ -84,15 +84,16 @@ fn invert_case_on_str(data: &str) -> Option<String> {
 
 #[inline]
 fn vapor_wave_str(data: &str) -> Option<String> {
+    if data.is_empty() {
+        return Some(String::new());
+    }
     let mut buffer = String::with_capacity(data.len() * 2 - 1);
     let chars = data.chars();
     for c in chars {
         buffer.push(c);
         buffer.push(' ');
     }
-    if buffer.len() > 0 {
-        buffer.pop();
-    }
+    buffer.pop();
     Some(buffer.to_uppercase())
 }
 
@@ -108,6 +109,9 @@ fn shuffle_str(data: &str) -> Option<String> {
 
 #[inline]
 fn is_str_made_of_identical_chars(data: &str) -> bool {
+    if data.len() < 2 {
+        return true;
+    }
     let c = data.chars().next().unwrap();
     return data.replace(c, "").is_empty()
 }
@@ -201,15 +205,20 @@ impl Stupid<String> for String {
     /// assert_eq!("aaaaa", "aaaaa".to_string().shuffle().unwrap());
     /// ```
     fn shuffle(&self) -> Option<String> {
-        if self.len() < 2 || is_str_made_of_identical_chars(self.as_str()) {
-            return Some(self.clone())
+        if is_str_made_of_identical_chars(self.as_str()) {
+           return Some(self.clone())
         }
         let chars = self.as_str();
-        let mut shuffled: String = shuffle_str(chars).unwrap();
-        while &shuffled == self {
-            shuffled = shuffle_str(chars).unwrap();
+        if let Some(mut shuffled) = shuffle_str(chars) {
+            while &shuffled == self {
+                if let Some(s) = shuffle_str(chars) {
+                    shuffled =s;
+                }
+            }
+            Some(shuffled)
+        } else {
+            None
         }
-        Some(shuffled)
     }
 
     /// # Example:
